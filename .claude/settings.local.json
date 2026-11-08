@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/Scripts/python.exe -m ai_pc.orchestrator.main --sim --no-npu --no-foundry)",
+      "Bash(echo \"started pid $!\")",
+      "Bash(.venv/Scripts/python.exe -c \"import urllib.request,json; print\\('health:', urllib.request.urlopen\\('http://127.0.0.1:8000/healthz',timeout=3\\).read\\(\\).decode\\(\\)\\)\")",
+      "Bash(.venv/Scripts/python.exe -c \"import urllib.request; req=urllib.request.Request\\('http://127.0.0.1:8000/trigger_spike',method='POST'\\); print\\('spike:', urllib.request.urlopen\\(req,timeout=3\\).read\\(\\).decode\\(\\)\\)\")",
+      "Read(//tmp/**)",
+      "Bash(kill %1)",
+      "Bash(.venv/Scripts/python.exe -m pytest -q)",
+      "Bash(.venv/Scripts/python.exe -m ai_pc.ml.gen_data --n 3000 --out ai_pc/ml/data/train_test.npz)",
+      "Bash(.venv/Scripts/python.exe -c \"import numpy as np; d=np.load\\('ai_pc/ml/data/train_test.npz',allow_pickle=True\\); print\\('X',d['X'].shape,'y range',round\\(float\\(d['y'].min\\(\\)\\),1\\),'-',round\\(float\\(d['y'].max\\(\\)\\),1\\)\\)\")",
+      "Bash(.venv/Scripts/python.exe -m compileall -q ai_pc cloud uno_q packages tests)",
+      "Bash(timeout 4 .venv/Scripts/python.exe uno_q/python/main.py --mock)",
+      "Read(//c/Program Files/mosquitto/**)",
+      "Read(//c/Program Files/Eclipse Mosquitto/**)",
+      "Bash(.venv/Scripts/python.exe -m pip install --quiet amqtt)",
+      "Bash(.venv/Scripts/python.exe -c \"import amqtt; print\\('amqtt', amqtt.__version__\\)\")",
+      "Bash(MQTT_HOST=127.0.0.1 .venv/Scripts/python.exe -m ai_pc.orchestrator.main --no-npu --no-foundry)",
+      "Bash(echo \"orch pid $!\")",
+      "Bash(tasklist //FI \"IMAGENAME eq python.exe\")",
+      "Bash(powershell.exe -NoProfile -Command \"Get-Process python -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(.venv/Scripts/python.exe /tmp/broker.py)",
+      "Bash(MQTT_HOST=127.0.0.1 .venv/Scripts/python.exe -u -m ai_pc.orchestrator.main --no-npu --no-foundry)",
+      "Bash(.venv/Scripts/python.exe /tmp/inttest.py)",
+      "Bash(timeout 7 env MQTT_HOST=127.0.0.1 .venv/Scripts/python.exe uno_q/python/main.py --mock)",
+      "Bash(.venv/Scripts/python.exe -m pip install --quiet statsmodels streamlit)",
+      "Bash(.venv/Scripts/python.exe -c \"import statsmodels, streamlit; print\\('statsmodels', statsmodels.__version__, '| streamlit', streamlit.__version__\\)\")",
+      "Bash(.venv/Scripts/python.exe -c ' *)",
+      "Bash(.venv/Scripts/python.exe infra/scripts/dev_broker.py)",
+      "Bash(.venv/Scripts/python.exe infra/scripts/demo_cascade.py)"
+    ]
+  }
+}

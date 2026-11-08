@@ -1,0 +1,6 @@
+# UNO Q MPU (Linux side) publisher deps.
+paho-mqtt>=2.0
+python-dotenv>=1.0
+# Optional: the shared contract (validation + builders). If installed, main.py
+# uses it; otherwise it builds payloads inline so it still runs on the device.
+#   pip install -e ../../packages/contract

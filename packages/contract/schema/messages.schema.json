@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vayumitra.dev/schema/messages.schema.json",
+  "title": "VayuMitra MQTT message contract",
+  "description": "The single cross-lane coupling. Every payload carries schema_version, msg_type, ts. Validate with vayumitra_contract.validate.validate(payload, msg_type).",
+  "$defs": {
+    "SensorReading": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "device_id", "pm25", "temperature", "humidity"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "SensorReading"},
+        "ts": {"type": "string", "format": "date-time"},
+        "device_id": {"type": "string"},
+        "pm1_0": {"type": ["number", "null"], "minimum": 0},
+        "pm25": {"type": "number", "minimum": 0},
+        "pm10": {"type": ["number", "null"], "minimum": 0},
+        "temperature": {"type": "number"},
+        "humidity": {"type": "number", "minimum": 0, "maximum": 100},
+        "pressure": {"type": ["number", "null"]},
+        "voc_index": {"type": ["number", "null"], "minimum": 0},
+        "source": {"type": "string", "enum": ["bme680+gp2y10", "bme690+gp2y10", "sim"]}
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "user_id", "severity"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "Profile"},
+        "ts": {"type": "string", "format": "date-time"},
+        "user_id": {"type": "string"},
+        "severity": {"type": "string", "enum": ["mild", "moderate", "severe"]},
+        "triggers": {"type": "array", "items": {"type": "string"}},
+        "aqi_tolerance": {"type": "number", "minimum": 0, "maximum": 500},
+        "humidity_threshold": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "medication": {"type": ["string", "null"]}
+      }
+    },
+    "RiskAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "user_id", "risk_score", "risk_level", "engine"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "RiskAssessment"},
+        "ts": {"type": "string", "format": "date-time"},
+        "user_id": {"type": "string"},
+        "device_id": {"type": ["string", "null"]},
+        "risk_score": {"type": "number", "minimum": 0, "maximum": 100},
+        "risk_level": {"type": "string", "enum": ["low", "moderate", "high", "critical"]},
+        "engine": {"type": "string", "enum": ["npu", "cpu", "heuristic"]},
+        "inference_ms": {"type": ["number", "null"], "minimum": 0},
+        "top_factors": {"type": "array", "items": {"type": "string"}},
+        "advisory": {"type": ["string", "null"]},
+        "advisory_source": {"type": ["string", "null"], "enum": ["llm", "template", null]}
+      }
+    },
+    "ForecastUpdate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "user_id", "horizon_min", "predictions"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "ForecastUpdate"},
+        "ts": {"type": "string", "format": "date-time"},
+        "user_id": {"type": "string"},
+        "horizon_min": {"type": "number", "minimum": 0},
+        "predictions": {
+          "type": "object",
+          "required": ["pm25", "humidity"],
+          "properties": {
+            "pm25": {"type": "array", "items": {"type": "number"}},
+            "humidity": {"type": "array", "items": {"type": "number"}}
+          }
+        },
+        "threshold_breach_min": {"type": ["number", "null"]},
+        "safe_windows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start_min": {"type": "number"},
+              "end_min": {"type": "number"}
+            }
+          }
+        }
+      }
+    },
+    "EmergencyAlert": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "alert_id", "user_id", "risk_score", "reason"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "EmergencyAlert"},
+        "ts": {"type": "string", "format": "date-time"},
+        "alert_id": {"type": "string"},
+        "user_id": {"type": "string"},
+        "risk_score": {"type": "number", "minimum": 0, "maximum": 100},
+        "reason": {"type": "string"},
+        "recommended_action": {"type": ["string", "null"]},
+        "safe_zone": {
+          "type": ["object", "null"],
+          "properties": {
+            "name": {"type": "string"},
+            "lat": {"type": "number"},
+            "lon": {"type": "number"},
+            "distance_m": {"type": "number"}
+          }
+        }
+      }
+    },
+    "EmergencyAck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "alert_id", "source"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "EmergencyAck"},
+        "ts": {"type": "string", "format": "date-time"},
+        "alert_id": {"type": "string"},
+        "user_id": {"type": ["string", "null"]},
+        "source": {"type": "string", "enum": ["mobile", "knob"]}
+      }
+    },
+    "DeviceCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "action"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "DeviceCommand"},
+        "ts": {"type": "string", "format": "date-time"},
+        "action": {"type": "string", "enum": ["alarm_on", "alarm_off", "led", "clear"]},
+        "led_color": {"type": ["string", "null"], "enum": ["green", "amber", "red", "off", null]},
+        "alert_id": {"type": ["string", "null"]}
+      }
+    },
+    "DeviceStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "online", "role"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "DeviceStatus"},
+        "ts": {"type": "string", "format": "date-time"},
+        "device_id": {"type": ["string", "null"]},
+        "online": {"type": "boolean"},
+        "role": {"type": "string", "enum": ["uno_q", "mobile", "ai_pc", "cloud"]}
+      }
+    },
+    "CloudZoneUpdate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "msg_type", "ts", "zones", "source"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "msg_type": {"const": "CloudZoneUpdate"},
+        "ts": {"type": "string", "format": "date-time"},
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "lat": {"type": "number"},
+              "lon": {"type": "number"},
+              "aqi": {"type": "number"},
+              "level": {"type": "string"}
+            }
+          }
+        },
+        "outlook_48h": {"type": ["string", "null"]},
+        "source": {"type": "string", "enum": ["cloud_ai_100", "template"]}
+      }
+    }
+  }
+}

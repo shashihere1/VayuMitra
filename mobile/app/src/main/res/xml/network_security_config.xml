@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dev config: allow cleartext MQTT/TCP to the LAN broker (no TLS at the
+     hackathon). Tighten for production. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

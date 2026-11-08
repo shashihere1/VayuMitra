@@ -1,0 +1,25 @@
+# VayuMitra UNO Q — Arduino App Lab app manifest (REFERENCE).
+#
+# App Lab generates its own app.yaml when you create the app in the IDE. This
+# file documents the intended shape; create the app in App Lab and paste in
+# sketch/sketch.ino and python/main.py, then set Wi-Fi + MQTT_HOST.
+name: vayumitra
+description: Edge air-quality sensing + emergency actuation (BME680/690 + GP2Y1010).
+version: 1.0.0
+
+# MCU side (STM32): all sensing + actuation.
+sketch:
+  path: sketch/sketch.ino
+
+# MPU side (Linux/Debian): Bridge -> MQTT publisher.
+python:
+  entrypoint: python/main.py
+  requirements: python/requirements.txt
+
+# Environment forwarded to the Python process (set on-device / in App Lab).
+env:
+  - MQTT_HOST
+  - MQTT_PORT
+  - DEVICE_ID
+  - USER_ID
+  - BME_VARIANT

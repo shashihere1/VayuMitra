@@ -1,0 +1,19 @@
+# VayuMitra AI-PC lane dependencies.
+# NPU (onnxruntime-qnn) and Foundry Local are installed SEPARATELY on the
+# Snapdragon Surface (see ai_pc/ml/README + section 8 of plan.md); every import
+# of them is defensive, so the stack runs without them.
+
+paho-mqtt>=2.0
+pydantic>=2.5
+python-dotenv>=1.0
+fastapi>=0.110
+uvicorn>=0.27
+numpy>=1.24
+jsonschema>=4.20
+statsmodels>=0.14        # forecast (optional; builtin Holt fallback exists)
+streamlit>=1.30          # dashboard
+onnxruntime>=1.17        # CPU inference (NPU wheel = onnxruntime-qnn, installed separately)
+
+# ML training/quantization (used only by ai_pc/ml scripts; heavy):
+#   pip install torch onnx
+# quantization runs on x64:  pip install onnxruntime  (the quantizer ships with it)

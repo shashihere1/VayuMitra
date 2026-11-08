@@ -1,0 +1,9 @@
+# Arduino sketch metadata (arduino-cli / App Lab).
+# Adjust default_fqbn to your UNO Q board identifier if different.
+default_fqbn: arduino:stm32:unoq
+libraries:
+  - Adafruit BME680 Library
+  - Adafruit Unified Sensor
+  - Modulino
+# For a BME690 with calibrated IAQ, replace Adafruit_BME680 with the Bosch
+# BME690_SensorAPI (or BSEC 3.x) and adapt readBME() accordingly.

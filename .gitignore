@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+build/
+dist/
+
+# Env / secrets
+.env
+
+# ML artifacts (large; regenerate or commit deliberately)
+ai_pc/ml/data/*.npz
+ai_pc/ml/models/*.onnx.tmp
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Android
+mobile/**/build/
+mobile/**/.gradle/
+mobile/local.properties
+*.iml
+
+# Mosquitto
+ai_pc/broker/mosquitto.db
+ai_pc/broker/*.log
+
+# Logs
+*.log

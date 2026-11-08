@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vayumitra-contract"
+version = "1.0.0"
+description = "VayuMitra MQTT message contract: topics, pydantic models, JSON-Schema validation. The only cross-lane coupling."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "VayuMitra Team"}]
+dependencies = [
+    "pydantic>=2.5",
+    "jsonschema>=4.20",
+]
+
+[tool.setuptools]
+packages = ["vayumitra_contract"]
+
+[tool.setuptools.package-data]
+vayumitra_contract = ["../schema/messages.schema.json"]
+
+[tool.setuptools.exclude-package-data]
+"*" = []
